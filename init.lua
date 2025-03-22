@@ -209,6 +209,11 @@ vim.keymap.set('n', '<C-M-l>', ':vertical resize +2<CR>', { noremap = true, sile
 vim.keymap.set('n', '<C-M-j>', ':resize -2<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<C-M-k>', ':resize +2<CR>', { noremap = true, silent = true })
 
+-- Buffer
+vim.keymap.set('n', '<Leader>bd', ':bd<CR>', { noremap = true, silent = true })
+-- Close buffer without closing the window
+vim.keymap.set('n', '<Leader>bD', ':bp | bd #<CR>', { noremap = true, silent = true })
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
