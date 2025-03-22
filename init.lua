@@ -203,6 +203,12 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
+-- Resize windows
+vim.keymap.set('n', '<C-M-h>', ':vertical resize -2<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<C-M-l>', ':vertical resize +2<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<C-M-j>', ':resize -2<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<C-M-k>', ':resize +2<CR>', { noremap = true, silent = true })
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -234,6 +240,7 @@ vim.cmd [[
 -- Netrw
 vim.g.netrw_sort_by = 'name' -- Sort files by name (can change to 'time' or 'size')
 vim.g.netrw_show_hidden = 1 -- Show hidden files (e.g., .git, .vimrc)
+vim.g.netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
 
 -- Bind <leader>E to open netrw file explorer
 vim.api.nvim_set_keymap('n', '<leader>e', ':Explore<CR>', { noremap = true, silent = true })
