@@ -970,6 +970,16 @@ require('lazy').setup({
     -- end,
   },
 
+  {
+    'sainnhe/sonokai',
+    -- priority = 1000, -- Ensures it loads first
+    config = function()
+      vim.g.sonokai_style = 'shusia' -- Choose a style (default: 'default', options: 'shusia', 'andromeda', etc.)
+      vim.g.sonokai_enable_italic = 1
+      -- vim.cmd 'colorscheme sonokai' -- Apply the colorscheme
+    end,
+  },
+
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
