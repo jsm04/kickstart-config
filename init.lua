@@ -100,9 +100,18 @@ vim.g.have_nerd_font = true
 
 -- Make line numbers default
 vim.opt.number = true
--- You can also add relative line numbers, to help with jumping.
---  Experiment for yourself to see if you like it!
--- vim.opt.relativenumber = true
+
+-- Relative line numbers
+vim.wo.relativenumber = true
+
+vim.api.nvim_create_autocmd('InsertEnter', {
+  pattern = '*',
+  command = 'set norelativenumber',
+})
+vim.api.nvim_create_autocmd('InsertLeave', {
+  pattern = '*',
+  command = 'set relativenumber',
+})
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -146,6 +155,9 @@ vim.opt.splitbelow = true
 --  and `:help 'listchars'`
 vim.opt.list = true
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+
+-- Toggle whitespace
+vim.api.nvim_set_keymap('n', '<leader>tw', ':set list!<CR>', { noremap = true, silent = true })
 
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = 'split'
@@ -934,6 +946,16 @@ require('lazy').setup({
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
       vim.cmd.colorscheme 'tokyonight-night'
     end,
+  },
+
+  {
+    'rockyzhang24/arctic.nvim',
+    dependencies = { 'rktjmp/lush.nvim' },
+    name = 'arctic',
+    branch = 'main',
+    -- config = function()
+    --   vim.cmd 'colorscheme arctic'
+    -- end,
   },
 
   -- Highlight todo, notes, etc in comments
