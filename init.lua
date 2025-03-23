@@ -134,14 +134,14 @@ vim.opt.breakindent = true
 vim.opt.undofile = true
 
 -- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
-vim.opt.ignorecase = true
+vim.opt.ignorecase = trueini
 vim.opt.smartcase = true
 
 -- Keep signcolumn on by default
 vim.opt.signcolumn = 'yes'
 
 -- Decrease update time
-vim.opt.updatetime = 250
+vim.opt.updatetime = 2500
 
 -- Decrease mapped sequence wait time
 vim.opt.timeoutlen = 300
@@ -731,9 +731,6 @@ require('lazy').setup({
         gopls = {},
         rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
-        ts_ls = {},
-        --
-
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
@@ -978,6 +975,7 @@ require('lazy').setup({
   {
     'projekt0n/github-nvim-theme',
     name = 'github-theme',
+    lazy = true,
     -- lazy = false, -- make sure we load this during startup if it is your main colorscheme
     -- priority = 1000, -- make sure to load this before all the other start plugins
     -- config = function()
@@ -991,8 +989,8 @@ require('lazy').setup({
 
   {
     'craftzdog/solarized-osaka.nvim',
-    lazy = true,
-    -- priority = 1000,
+    lazy = false,
+    priority = 1000,
     config = function()
       require('solarized-osaka').setup {
         -- your configuration comes here
@@ -1016,18 +1014,23 @@ require('lazy').setup({
         dim_inactive = true, -- dims inactive windows
         lualine_bold = false, -- When `true`, section headers in the lualine theme will be bold
       }
-      -- vim.cmd [[colorscheme solarized-osaka]]
+      vim.cmd [[colorscheme solarized-osaka]]
     end,
   },
 
   {
     'sainnhe/gruvbox-material',
-    priority = 1000,
+    lazy = true,
+    -- priority = 1000,
     config = function()
       vim.g.gruvbox_material_background = 'medium' -- Options: 'hard', 'medium', 'soft'
       vim.g.gruvbox_material_enable_bold = 1
       vim.g.gruvbox_material_enable_italic = 1
-      vim.cmd 'colorscheme gruvbox-material'
+
+      vim.g.gruvbox_material_colors_override = {
+        bg0 = { '#231E1B', '234' }, -- Custom dark background
+      }
+      -- vim.cmd 'colorscheme gruvbox-material'
     end,
   },
 
