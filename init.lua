@@ -253,7 +253,7 @@ vim.g.netrw_sort_by = 'name' -- Sort files by name (can change to 'time' or 'siz
 vim.g.netrw_show_hidden = 1 -- Show hidden files (e.g., .git, .vimrc)
 vim.g.netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
 
--- Bind <leader>E to open netrw file explorer
+-- Open netrw explorer
 vim.api.nvim_set_keymap('n', '<leader>e', ':Explore<CR>', { noremap = true, silent = true })
 
 -- Hover lps info
@@ -262,8 +262,8 @@ vim.api.nvim_set_keymap('n', 'gh', ':lua vim.lsp.buf.hover()<CR>', { noremap = t
 -- Add border to LSP hover window
 vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
   border = 'rounded', -- You can use "single", "double", "rounded", or "solid"
-  width = 80, -- Adjust the width as needed
-  height = 20, -- Adjust the height as needed
+  -- width = 80, -- Adjust the width as needed
+  -- height = 20, -- Adjust the height as needed
 })
 
 -- [[ Install `lazy.nvim` plugin manager ]]
@@ -728,16 +728,9 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        -- clangd = {},
         gopls = {},
-        -- pyright = {},
         rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
-        --
-        -- Some languages (like typescript) have entire language plugins that can be useful:
-        --    https://github.com/pmizio/typescript-tools.nvim
-        --
-        -- But for many setups, the LSP (`ts_ls`) will work just fine
         ts_ls = {},
         --
 
@@ -908,9 +901,11 @@ require('lazy').setup({
 
           -- If you prefer more traditional completion keymaps,
           -- you can uncomment the following lines
-          --['<CR>'] = cmp.mapping.confirm { select = true },
-          --['<Tab>'] = cmp.mapping.select_next_item(),
-          --['<S-Tab>'] = cmp.mapping.select_prev_item(),
+
+          -- Try this keymaps
+          ['<CR>'] = cmp.mapping.confirm { select = true },
+          ['<Tab>'] = cmp.mapping.select_next_item(),
+          ['<S-Tab>'] = cmp.mapping.select_prev_item(),
 
           -- Manually trigger a completion from nvim-cmp.
           --  Generally you don't need this, because nvim-cmp will display
@@ -954,11 +949,7 @@ require('lazy').setup({
     end,
   },
 
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
+  {
     'folke/tokyonight.nvim',
     -- priority = 1000, -- Make sure to load this before all the other start plugins.
     -- config = function()
@@ -969,9 +960,6 @@ require('lazy').setup({
     --     },
     --   }
     --
-    --   -- Load the colorscheme here.
-    --   -- Like many other themes, this one has different styles, and you could load
-    --   -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
     --   vim.cmd.colorscheme 'tokyonight-night'
     -- end,
   },
@@ -1003,8 +991,8 @@ require('lazy').setup({
 
   {
     'craftzdog/solarized-osaka.nvim',
-    lazy = false,
-    priority = 1000,
+    lazy = true,
+    -- priority = 1000,
     config = function()
       require('solarized-osaka').setup {
         -- your configuration comes here
@@ -1028,8 +1016,18 @@ require('lazy').setup({
         dim_inactive = true, -- dims inactive windows
         lualine_bold = false, -- When `true`, section headers in the lualine theme will be bold
       }
+      -- vim.cmd [[colorscheme solarized-osaka]]
+    end,
+  },
 
-      vim.cmd [[colorscheme solarized-osaka]]
+  {
+    'sainnhe/gruvbox-material',
+    priority = 1000,
+    config = function()
+      vim.g.gruvbox_material_background = 'medium' -- Options: 'hard', 'medium', 'soft'
+      vim.g.gruvbox_material_enable_bold = 1
+      vim.g.gruvbox_material_enable_italic = 1
+      vim.cmd 'colorscheme gruvbox-material'
     end,
   },
 
