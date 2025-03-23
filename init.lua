@@ -253,6 +253,13 @@ vim.api.nvim_set_keymap('n', '<leader>e', ':Explore<CR>', { noremap = true, sile
 -- Hover lps info
 vim.api.nvim_set_keymap('n', 'gh', ':lua vim.lsp.buf.hover()<CR>', { noremap = true, silent = true })
 
+-- Add border to LSP hover window
+vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
+  border = 'rounded', -- You can use "single", "double", "rounded", or "solid"
+  width = 80, -- Adjust the width as needed
+  height = 20, -- Adjust the height as needed
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -997,7 +1004,7 @@ require('lazy').setup({
         -- your configuration comes here
         -- or leave it empty to use the default settings
         transparent = false, -- Enable this to disable setting the background color
-        terminal_colors = true, -- Configure the colors used when opening a `:terminal` in [Neovim](https://github.com/neovim/neovim)
+        terminal_colors = false, -- Configure the colors used when opening a `:terminal` in [Neovim](https://github.com/neovim/neovim)
         styles = {
           -- Style to be applied to different syntax groups
           -- Value is any valid attr-list value for `:help nvim_set_hl`
@@ -1012,13 +1019,15 @@ require('lazy').setup({
         sidebars = { 'qf', 'help' }, -- Set a darker background on sidebar-like windows. For example: `["qf", "vista_kind", "terminal", "packer"]`
         day_brightness = 0.3, -- Adjusts the brightness of the colors of the **Day** style. Number between 0 and 1, from dull to vibrant colors
         hide_inactive_statusline = false, -- Enabling this option, will hide inactive statuslines and replace them with a thin border instead. Should work with the standard **StatusLine** and **LuaLine**.
-        dim_inactive = false, -- dims inactive windows
+        dim_inactive = true, -- dims inactive windows
         lualine_bold = false, -- When `true`, section headers in the lualine theme will be bold
       }
 
       vim.cmd [[colorscheme solarized-osaka]]
     end,
   },
+
+  { 'ellisonleao/gruvbox.nvim', lazy = true, config = true },
 
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
