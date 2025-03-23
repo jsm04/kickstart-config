@@ -214,10 +214,7 @@ vim.keymap.set('n', '<Leader>bd', ':bd<CR>', { noremap = true, silent = true })
 -- Close buffer without closing the window
 vim.keymap.set('n', '<Leader>bD', ':bp | bd #<CR>', { noremap = true, silent = true })
 
--- Diagnostics enable and disable
--- vim.keymap.set('n', '<leader>tde', '<cmd>lua vim.diagnostic.enable()<cr>')
--- vim.keymap.set('n', '<leader>tdd', '<cmd>lua vim.diagnostic.disable()<cr>')
-
+-- Diagnostics disable text toggle
 vim.keymap.set('n', '<leader>td', function()
   local current = vim.diagnostic.config().virtual_text
   vim.diagnostic.config { virtual_text = not current }
