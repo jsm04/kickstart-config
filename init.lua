@@ -1014,6 +1014,7 @@ require('lazy').setup({
         dim_inactive = true, -- dims inactive windows
         lualine_bold = false, -- When `true`, section headers in the lualine theme will be bold
       }
+
       vim.cmd [[colorscheme solarized-osaka]]
     end,
   },
@@ -1035,6 +1036,17 @@ require('lazy').setup({
   },
 
   { 'ellisonleao/gruvbox.nvim', lazy = true, config = true },
+
+  {
+    'nickkadutskyi/jb.nvim',
+    lazy = false,
+    -- priority = 1000,
+    opts = {},
+    config = function()
+      -- require("jb").setup({transparent = true})
+      -- vim.cmd 'colorscheme jb'
+    end,
+  },
 
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
