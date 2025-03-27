@@ -134,7 +134,7 @@ vim.opt.breakindent = true
 vim.opt.undofile = true
 
 -- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
-vim.opt.ignorecase = trueini
+vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
 -- Keep signcolumn on by default
@@ -251,11 +251,11 @@ vim.cmd [[
 ]]
 
 -- Netrw
+vim.g.netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
 vim.g.netrw_sort_by = 'name' -- Sort files by name (can change to 'time' or 'size')
 vim.g.netrw_show_hidden = 1 -- Show hidden files (e.g., .git, .vimrc)
-vim.g.netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
-vim.g.netrw_liststyle = 0 -- Enable tree view
-vim.g.netrw_banner = 1 -- Disable banner
+vim.g.netrw_banner = 1 -- Disable/Enable banner
+vim.g.netrw_liststyle = 0
 
 -- Open netrw explorer
 vim.api.nvim_set_keymap('n', '<leader>e', ':Explore<CR>', { noremap = true, silent = true })
