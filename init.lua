@@ -22,16 +22,7 @@
 
 What is Kickstart?
 
-  Kickstart.nvim is *not* a distribution.
-
   Kickstart.nvim is a starting point for your own configuration.
-    The goal is that you can read every line of code, top-to-bottom, understand
-    what your configuration is doing, and modify it to suit your needs.
-
-    Once you've done that, you can start exploring, configuring and tinkering to
-    make Neovim your own! That might mean leaving Kickstart just the way it is for a while
-    or immediately breaking it into modular pieces. It's up to you!
-
     If you don't know anything about Lua, I recommend taking some time to read through
     a guide. One possible example which will only take 10-15 minutes:
       - https://learnxinyminutes.com/docs/lua/
@@ -42,9 +33,6 @@ What is Kickstart?
     - (or HTML version): https://neovim.io/doc/user/lua-guide.html
 
 Kickstart Guide:
-
-  Once you've completed that, you can continue working through **AND READING** the rest
-  of the kickstart init.lua.
 
   Next, run AND READ `:help`.
     This will open up a help window with some basic information
@@ -209,10 +197,23 @@ vim.keymap.set('n', '<C-M-l>', ':vertical resize +2<CR>', { noremap = true, sile
 vim.keymap.set('n', '<C-M-j>', ':resize -2<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<C-M-k>', ':resize +2<CR>', { noremap = true, silent = true })
 
--- Buffer
+-- Buffers
 vim.keymap.set('n', '<Leader>bd', ':bd<CR>', { noremap = true, silent = true })
 -- Close buffer without closing the window
 vim.keymap.set('n', '<Leader>bD', ':bp | bd #<CR>', { noremap = true, silent = true })
+-- Go to previous and next buffer
+vim.keymap.set('n', '[b', ':bprevious<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', ']b', ':bnext<CR>', { noremap = true, silent = true })
+
+-- Go to previous and next tag
+vim.keymap.set('n', '[t', ':tselect<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', ']t', ':tag<CR>', { noremap = true, silent = true })
+
+-- Tabs
+-- Go to previous and next tab
+-- vim.keymap.set('n', '[t', ':tabprevious<CR>', { noremap = true, silent = true })
+-- vim.keymap.set('n', ']t', ':tabnext<CR>', { noremap = true, silent = true })
+
 -- Go to mark
 vim.api.nvim_set_keymap('n', 'gm', '`', { noremap = true, silent = true })
 
