@@ -171,6 +171,17 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
+-- test
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'qf',
+  callback = function()
+    -- Check if the location list (not quickfix) is open
+    if vim.fn.getloclist(0, { title = 1 }).title:find 'Diagnostics' then
+      vim.api.nvim_buf_set_keymap(0, 'n', 'q', ':lclose<CR>', { noremap = true, silent = true })
+    end
+  end,
+})
+
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
