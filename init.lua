@@ -791,6 +791,8 @@ require('lazy').setup({
     end,
   },
 
+  { 'yorickpeterse/vim-paper' },
+
   { -- Autoformat
     'stevearc/conform.nvim',
     event = { 'BufWritePre' },
