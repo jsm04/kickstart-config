@@ -225,14 +225,26 @@ vim.keymap.set('n', ']t', ':tag<CR>', { noremap = true, silent = true })
 -- vim.keymap.set('n', '[t', ':tabprevious<CR>', { noremap = true, silent = true })
 -- vim.keymap.set('n', ']t', ':tabnext<CR>', { noremap = true, silent = true })
 
+-- Copy buffer path
+vim.keymap.set('n', '<leader>yd', ':let @+ = expand("%:p:h")<CR>', { desc = 'Copy file directory' })
+
 -- Go to mark
 vim.api.nvim_set_keymap('n', 'gm', '`', { noremap = true, silent = true })
 
 -- Diagnostics disable text toggle
-vim.keymap.set('n', '<leader>td', function()
+vim.keymap.set('n', '<leader>tda', function()
   local current = vim.diagnostic.config().virtual_text
   vim.diagnostic.config { virtual_text = not current }
 end, { desc = 'Toggle diagnostic virtual text' })
+
+-- Show only errors (hide warnings & info)
+vim.keymap.set('n', '<leader>tdw', function()
+  vim.diagnostic.config {
+    virtual_text = { severity = vim.diagnostic.severity.ERROR },
+    signs = { severity = vim.diagnostic.severity.ERROR },
+    underline = { severity = vim.diagnostic.severity.ERROR },
+  }
+end, { desc = 'Show only errors, hide warnings/info' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -364,7 +376,7 @@ require('lazy').setup({
     opts = {
       -- delay between pressing a key and opening which-key (milliseconds)
       -- this setting is independent of vim.opt.timeoutlen
-      delay = 500,
+      delay = 1000,
       icons = {
         -- set icon mappings to true if you have a Nerd Font
         mappings = vim.g.have_nerd_font,
@@ -719,8 +731,13 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
+        basedpyright = {},
+        ruff = {},
+        ts_ls = {},
+        prettier = {},
         gopls = {},
         rust_analyzer = {},
+        clangd = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         lua_ls = {
           -- cmd = { ... },
@@ -932,9 +949,17 @@ require('lazy').setup({
           { name = 'luasnip' },
           { name = 'path' },
           { name = 'nvim_lsp_signature_help' },
+          { name = 'render-markdown' },
         },
       }
     end,
+  },
+
+  {
+    'MeanderingProgrammer/render-markdown.nvim',
+    opts = {
+      completions = { lsp = { enabled = true } },
+    },
   },
 
   {
