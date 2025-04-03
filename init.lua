@@ -171,7 +171,6 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
--- test
 vim.api.nvim_create_autocmd('FileType', {
   pattern = 'qf',
   callback = function()
@@ -232,7 +231,7 @@ vim.keymap.set('n', '<leader>yd', ':let @+ = expand("%:p:h")<CR>', { desc = 'Cop
 vim.api.nvim_set_keymap('n', 'gm', '`', { noremap = true, silent = true })
 
 -- Diagnostics disable text toggle
-vim.keymap.set('n', '<leader>tda', function()
+vim.keymap.set('n', '<leader>tdt', function()
   local current = vim.diagnostic.config().virtual_text
   vim.diagnostic.config { virtual_text = not current }
 end, { desc = 'Toggle diagnostic virtual text' })
@@ -733,7 +732,6 @@ require('lazy').setup({
       local servers = {
         basedpyright = {},
         ruff = {},
-        ts_ls = {},
         prettier = {},
         gopls = {},
         rust_analyzer = {},
@@ -966,6 +964,7 @@ require('lazy').setup({
 
   {
     'folke/tokyonight.nvim',
+    lazy = true,
     -- priority = 1000, -- Make sure to load this before all the other start plugins.
     -- config = function()
     --   ---@diagnostic disable-next-line: missing-fields
@@ -994,7 +993,6 @@ require('lazy').setup({
     'projekt0n/github-nvim-theme',
     name = 'github-theme',
     lazy = true,
-    -- lazy = false, -- make sure we load this during startup if it is your main colorscheme
     -- priority = 1000, -- make sure to load this before all the other start plugins
     -- config = function()
     --   require('github-theme').setup({
@@ -1008,7 +1006,7 @@ require('lazy').setup({
   {
     'craftzdog/solarized-osaka.nvim',
     lazy = false,
-    priority = 1000,
+    priority = 2000,
     config = function()
       require('solarized-osaka').setup {
         -- your configuration comes here
@@ -1027,42 +1025,97 @@ require('lazy').setup({
           floats = 'dark', -- style for floating windows
         },
         sidebars = { 'qf', 'help' }, -- Set a darker background on sidebar-like windows. For example: `["qf", "vista_kind", "terminal", "packer"]`
-        day_brightness = 0.3, -- Adjusts the brightness of the colors of the **Day** style. Number between 0 and 1, from dull to vibrant colors
+        day_brightness = 1, -- Adjusts the brightness of the colors of the **Day** style. Number between 0 and 1, from dull to vibrant colors
         hide_inactive_statusline = false, -- Enabling this option, will hide inactive statuslines and replace them with a thin border instead. Should work with the standard **StatusLine** and **LuaLine**.
         dim_inactive = true, -- dims inactive windows
-        lualine_bold = false, -- When `true`, section headers in the lualine theme will be bold
+        lualine_bold = true, -- When `true`, section headers in the lualine theme will be bold
       }
 
-      vim.cmd [[colorscheme solarized-osaka]]
+      -- vim.cmd [[colorscheme solarized-osaka]]
     end,
   },
 
   {
-    'sainnhe/gruvbox-material',
-    lazy = true,
-    -- priority = 1000,
-    config = function()
-      vim.g.gruvbox_material_background = 'medium' -- Options: 'hard', 'medium', 'soft'
-      vim.g.gruvbox_material_enable_bold = 1
-      vim.g.gruvbox_material_enable_italic = 1
-
-      vim.g.gruvbox_material_colors_override = {
-        bg0 = { '#231E1B', '234' }, -- Custom dark background
-      }
-      -- vim.cmd 'colorscheme gruvbox-material'
-    end,
-  },
-
-  { 'ellisonleao/gruvbox.nvim', lazy = true, config = true },
-
-  {
-    'nickkadutskyi/jb.nvim',
+    'rose-pine/neovim',
     lazy = false,
-    -- priority = 1000,
-    opts = {},
+    priority = 1000,
     config = function()
-      -- require("jb").setup({transparent = true})
-      -- vim.cmd 'colorscheme jb'
+      require('rose-pine').setup {
+        variant = 'moon', -- auto, main, moon, or dawn
+        dark_variant = 'moon', -- main, moon, or dawn
+        dim_inactive_windows = false,
+        extend_background_behind_borders = true,
+
+        enable = {
+          terminal = true,
+        },
+
+        styles = {
+          bold = true,
+          italic = false,
+          transparency = true,
+        },
+
+        groups = {
+          border = 'muted',
+          link = 'iris',
+          panel = 'surface',
+
+          error = 'love',
+          hint = 'iris',
+          info = 'foam',
+          note = 'pine',
+          todo = 'rose',
+          warn = 'gold',
+
+          git_add = 'foam',
+          git_change = 'rose',
+          git_delete = 'love',
+          git_dirty = 'rose',
+          git_ignore = 'muted',
+          git_merge = 'iris',
+          git_rename = 'pine',
+          git_stage = 'iris',
+          git_text = 'rose',
+          git_untracked = 'subtle',
+
+          h1 = 'iris',
+          h2 = 'foam',
+          h3 = 'rose',
+          h4 = 'gold',
+          h5 = 'pine',
+          h6 = 'foam',
+        },
+
+        palette = {},
+
+        highlight_groups = {},
+
+        before_highlight = function(group, highlight, palette) end,
+      }
+      vim.cmd 'colorscheme rose-pine'
+    end,
+  },
+
+  {
+    'Mofiqul/vscode.nvim',
+    lazy = true,
+    config = function()
+      local c = require('vscode.colors').get_colors()
+      require('vscode').setup {
+        transparent = false,
+        italic_comments = true,
+        underline_links = true,
+        disable_nvimtree_bg = true,
+        terminal_colors = true,
+        color_overrides = {
+          vscLineNumber = '#FFFFFF',
+        },
+        group_overrides = {
+          Cursor = { fg = c.vscDarkBlue, bg = c.vscLightGreen, bold = true },
+        },
+      }
+      -- vim.cmd.colorscheme 'vscode'
     end,
   },
 
