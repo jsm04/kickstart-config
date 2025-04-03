@@ -979,28 +979,56 @@ require('lazy').setup({
   },
 
   {
-    'rockyzhang24/arctic.nvim',
-    lazy = true,
-    dependencies = { 'rktjmp/lush.nvim' },
-    name = 'arctic',
-    branch = 'main',
-    -- config = function()
-    --   vim.cmd 'colorscheme arctic'
-    -- end,
-  },
-
-  {
     'projekt0n/github-nvim-theme',
     name = 'github-theme',
-    lazy = true,
-    -- priority = 1000, -- make sure to load this before all the other start plugins
-    -- config = function()
-    --   require('github-theme').setup({
-    --     -- ...
-    --   })
-    --
-    --   vim.cmd('colorscheme github_dark')
-    -- end,
+    lazy = false,
+    priority = 1000, -- make sure to load this before all the other start plugins
+    config = function()
+      require('github-theme').setup {
+        options = {
+          compile_path = vim.fn.stdpath 'cache' .. '/github-theme',
+          compile_file_suffix = '_compiled', -- Compiled file suffix
+          hide_end_of_buffer = true, -- Hide the '~' character at the end of the buffer for a cleaner look
+          hide_nc_statusline = true, -- Override the underline style for non-active statuslines
+          transparent = true, -- Disable setting bg (make neovim's background transparent)
+          terminal_colors = true, -- Set terminal colors (vim.g.terminal_color_*) used in `:terminal`
+          dim_inactive = false, -- Non focused panes set to alternative background
+          module_default = true, -- Default enable value for modules
+          styles = { -- Style to be applied to different syntax groups
+            comments = 'italic', -- Value is any valid attr-list value `:help attr-list`
+            functions = 'NONE',
+            keywords = 'italic',
+            variables = 'NONE',
+            conditionals = 'italic',
+            constants = 'italic',
+            numbers = 'NONE',
+            operators = 'NONE',
+            strings = 'NONE',
+            types = 'italic',
+          },
+          inverse = { -- Inverse highlight for different types
+            match_paren = false,
+            visual = false,
+            search = false,
+          },
+          darken = { -- Darken floating windows and sidebar-like windows
+            floats = true,
+            sidebars = {
+              enable = true,
+              list = {}, -- Apply dark background to specific windows
+            },
+          },
+          modules = { -- List of various plugins and additional options
+            -- ...
+          },
+        },
+        palettes = {},
+        specs = {},
+        groups = {},
+      }
+
+      vim.cmd 'colorscheme github_dark_high_contrast'
+    end,
   },
 
   {
@@ -1027,95 +1055,11 @@ require('lazy').setup({
         sidebars = { 'qf', 'help' }, -- Set a darker background on sidebar-like windows. For example: `["qf", "vista_kind", "terminal", "packer"]`
         day_brightness = 1, -- Adjusts the brightness of the colors of the **Day** style. Number between 0 and 1, from dull to vibrant colors
         hide_inactive_statusline = false, -- Enabling this option, will hide inactive statuslines and replace them with a thin border instead. Should work with the standard **StatusLine** and **LuaLine**.
-        dim_inactive = true, -- dims inactive windows
+        dim_inactive = false, -- dims inactive windows
         lualine_bold = true, -- When `true`, section headers in the lualine theme will be bold
       }
 
       -- vim.cmd [[colorscheme solarized-osaka]]
-    end,
-  },
-
-  {
-    'rose-pine/neovim',
-    lazy = false,
-    priority = 1000,
-    config = function()
-      require('rose-pine').setup {
-        variant = 'moon', -- auto, main, moon, or dawn
-        dark_variant = 'moon', -- main, moon, or dawn
-        dim_inactive_windows = false,
-        extend_background_behind_borders = true,
-
-        enable = {
-          terminal = true,
-        },
-
-        styles = {
-          bold = true,
-          italic = false,
-          transparency = true,
-        },
-
-        groups = {
-          border = 'muted',
-          link = 'iris',
-          panel = 'surface',
-
-          error = 'love',
-          hint = 'iris',
-          info = 'foam',
-          note = 'pine',
-          todo = 'rose',
-          warn = 'gold',
-
-          git_add = 'foam',
-          git_change = 'rose',
-          git_delete = 'love',
-          git_dirty = 'rose',
-          git_ignore = 'muted',
-          git_merge = 'iris',
-          git_rename = 'pine',
-          git_stage = 'iris',
-          git_text = 'rose',
-          git_untracked = 'subtle',
-
-          h1 = 'iris',
-          h2 = 'foam',
-          h3 = 'rose',
-          h4 = 'gold',
-          h5 = 'pine',
-          h6 = 'foam',
-        },
-
-        palette = {},
-
-        highlight_groups = {},
-
-        before_highlight = function(group, highlight, palette) end,
-      }
-      vim.cmd 'colorscheme rose-pine'
-    end,
-  },
-
-  {
-    'Mofiqul/vscode.nvim',
-    lazy = true,
-    config = function()
-      local c = require('vscode.colors').get_colors()
-      require('vscode').setup {
-        transparent = false,
-        italic_comments = true,
-        underline_links = true,
-        disable_nvimtree_bg = true,
-        terminal_colors = true,
-        color_overrides = {
-          vscLineNumber = '#FFFFFF',
-        },
-        group_overrides = {
-          Cursor = { fg = c.vscDarkBlue, bg = c.vscLightGreen, bold = true },
-        },
-      }
-      -- vim.cmd.colorscheme 'vscode'
     end,
   },
 
