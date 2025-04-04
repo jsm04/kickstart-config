@@ -18,48 +18,35 @@
 ========                                                     ========
 =====================================================================
 =====================================================================
-
-What is Kickstart?
-
-  Kickstart.nvim is a starting point for your own configuration.
-    If you don't know anything about Lua, I recommend taking some time to read through
-    a guide. One possible example which will only take 10-15 minutes:
-      - https://learnxinyminutes.com/docs/lua/
-
-    After understanding a bit more about Lua, you can use `:help lua-guide` as a
-    reference for how Neovim integrates Lua.
-    - :help lua-guide
-    - (or HTML version): https://neovim.io/doc/user/lua-guide.html
-
-Kickstart Guide:
-
-  Next, run AND READ `:help`.
-    This will open up a help window with some basic information
-    about reading, navigating and searching the builtin help documentation.
-
-    This should be the first place you go to look when you're stuck or confused
-    with something. It's one of my favorite Neovim features.
-
-    MOST IMPORTANTLY, we provide a keymap "<space>sh" to [s]earch the [h]elp documentation,
-    which is very useful when you're not exactly sure of what you're looking for.
-
-  I have left several `:help X` comments throughout the init.lua
-    These are hints about where to find more information about the relevant settings,
-    plugins or Neovim features used in Kickstart.
-
-   NOTE: Look for lines like this
-
-    Throughout the file. These are for you, the reader, to help you understand what is happening.
-    Feel free to delete them once you know what you're doing, but they should serve as a guide
-    for when you are first encountering a few different constructs in your Neovim config.
-
-If you experience any errors while trying to install kickstart, run `:checkhealth` for more info.
-
-I hope you enjoy your Neovim journey,
-- TJ
-
-P.S. You can delete this when you're done too. It's your config now! :)
 --]]
+
+local disabled_built_ins = {
+  'gzip',
+  'zip',
+  'zipPlugin',
+  'tar',
+  'tarPlugin',
+  'getscript',
+  'getscriptPlugin',
+  'vimball',
+  'vimballPlugin',
+  '2html_plugin',
+  'logipat',
+  'man',
+  'shada_plugin',
+  'spellfile_plugin',
+  'rrhelper',
+}
+
+for _, plugin in pairs(disabled_built_ins) do
+  vim.g['loaded_' .. plugin] = 1
+end
+
+-- Disable remote providers
+vim.g.loaded_python3_provider = 0
+vim.g.loaded_ruby_provider = 0
+vim.g.loaded_node_provider = 0
+vim.g.loaded_perl_provider = 0
 
 -- Enable undofile to persist undo history across sessions
 vim.o.undofile = true
@@ -176,11 +163,16 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
 vim.api.nvim_create_autocmd('FileType', {
-  pattern = 'qf',
+  pattern = { 'qf', 'man', 'help' },
   callback = function()
-    -- Check if the location list (not quickfix) is open
-    if vim.fn.getloclist(0, { title = 1 }).title:find 'Diagnostics' then
-      vim.api.nvim_buf_set_keymap(0, 'n', 'q', ':lclose<CR>', { noremap = true, silent = true })
+    local ft = vim.bo.filetype
+    if ft == 'man' or ft == 'help' then
+      vim.api.nvim_buf_set_keymap(0, 'n', 'q', ':quit<CR>', { noremap = true, silent = true })
+    elseif ft == 'qf' then
+      local loclist = vim.fn.getloclist(0, { title = 1 })
+      if loclist.title and loclist.title:find 'Diagnostics' then
+        vim.api.nvim_buf_set_keymap(0, 'n', 'q', ':lclose<CR>', { noremap = true, silent = true })
+      end
     end
   end,
 })
@@ -188,7 +180,6 @@ vim.api.nvim_create_autocmd('FileType', {
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
---
 -- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
@@ -222,11 +213,6 @@ vim.keymap.set('n', ']b', ':bnext<CR>', { noremap = true, silent = true })
 -- Go to previous and next tag
 vim.keymap.set('n', '[t', ':tselect<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', ']t', ':tag<CR>', { noremap = true, silent = true })
-
--- Tabs
--- Go to previous and next tab
--- vim.keymap.set('n', '[t', ':tabprevious<CR>', { noremap = true, silent = true })
--- vim.keymap.set('n', ']t', ':tabnext<CR>', { noremap = true, silent = true })
 
 -- Copy buffer path
 vim.keymap.set('n', '<leader>yd', ':let @+ = expand("%:p:h")<CR>', { desc = 'Copy file directory' })
@@ -293,8 +279,6 @@ vim.api.nvim_set_keymap('n', 'gh', ':lua vim.lsp.buf.hover()<CR>', { noremap = t
 -- Add border to LSP hover window
 vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
   border = 'rounded', -- You can use "single", "double", "rounded", or "solid"
-  -- width = 80, -- Adjust the width as needed
-  -- height = 20, -- Adjust the height as needed
 })
 
 -- [[ Install `lazy.nvim` plugin manager ]]
@@ -311,41 +295,10 @@ vim.opt.rtp:prepend(lazypath)
 
 -- [[ Configure and install plugins ]]
 --
---  To check the current status of your plugins, run
---    :Lazy
---
---  You can press `?` in this menu for help. Use `:q` to close the window
---
---  To update plugins you can run
---    :Lazy update
---
--- NOTE: Here is where you install your plugins.
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
-  -- NOTE: Plugins can also be added by using a table,
-  -- with the first argument being the link and the following
-  -- keys can be used to configure plugin behavior/loading/etc.
-  --
-  -- Use `opts = {}` to automatically pass options to a plugin's `setup()` function, forcing the plugin to be loaded.
-  --
-
-  -- Alternatively, use `config = function() ... end` for full control over the configuration.
-  -- If you prefer to call `setup` explicitly, use:
-  --    {
-  --        'lewis6991/gitsigns.nvim',
-  --        config = function()
-  --            require('gitsigns').setup({
-  --                -- Your gitsigns configuration here
-  --            })
-  --        end,
-  --    }
-  --
-  -- Here is a more advanced example where we pass configuration
-  -- options to `gitsigns.nvim`.
-  --
-  -- See `:help gitsigns` to understand what the configuration keys do
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
     opts = {
@@ -358,20 +311,6 @@ require('lazy').setup({
       },
     },
   },
-
-  -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
-  --
-  -- This is often very useful to both group configuration, as well as handle
-  -- lazy loading plugins that don't need to be loaded immediately at startup.
-  --
-  -- For example, in the following configuration, we use:
-  --  event = 'VimEnter'
-  --
-  -- which loads which-key before all the UI elements are loaded. Events can be
-  -- normal autocommands events (`:help autocmd-events`).
-  --
-  -- Then, because we use the `opts` key (recommended), the configuration runs
-  -- after the plugin has been loaded as `require(MODULE).setup(opts)`.
 
   { -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
@@ -446,8 +385,6 @@ require('lazy').setup({
       { -- If encountering errors, see telescope-fzf-native README for installation instructions
         'nvim-telescope/telescope-fzf-native.nvim',
 
-        -- `build` is used to run some command when the plugin is installed/updated.
-        -- This is only run then, not every time Neovim starts up.
         build = 'make',
 
         -- `cond` is a condition used to determine whether this plugin should be
@@ -513,6 +450,7 @@ require('lazy').setup({
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
+
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
       vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
@@ -630,8 +568,6 @@ require('lazy').setup({
           -- or a suggestion from your LSP for this to activate.
           map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
 
-          -- WARN: This is not Goto Definition, this is Goto Declaration.
-          --  For example, in C this would take you to the header.
           map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 
           -- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
@@ -793,8 +729,6 @@ require('lazy').setup({
     end,
   },
 
-  { 'yorickpeterse/vim-paper' },
-
   { -- Autoformat
     'stevearc/conform.nvim',
     event = { 'BufWritePre' },
@@ -866,6 +800,7 @@ require('lazy').setup({
           -- },
         },
       },
+
       'saadparwaiz1/cmp_luasnip',
 
       -- Adds other completion capabilities.
@@ -906,7 +841,8 @@ require('lazy').setup({
           -- Accept ([y]es) the completion.
           --  This will auto-import if your LSP supports it.
           --  This will expand snippets if the LSP sent a snippet.
-          ['<C-y>'] = cmp.mapping.confirm { select = true },
+          --  TODO: This doesnt work, find out why
+          -- ['<C-y>'] = cmp.mapping.confirm { select = true },
 
           -- Try this keymaps
           ['<CR>'] = cmp.mapping.confirm { select = true },
@@ -1007,22 +943,20 @@ require('lazy').setup({
     dependencies = {
       'tjdevries/colorbuddy.nvim',
     },
-    config = function()
-      require('vitesse').setup {
-        comment_italics = true,
-        transparent_background = true,
-        transparent_float_background = true, -- aka pum(popup menu) background
-        reverse_visual = false,
-        dim_nc = false,
-        cmp_cmdline_disable_search_highlight_group = false, -- disable search highlight group for cmp item
-        telescope_border_follow_float_background = false,
-        lspsaga_border_follow_float_background = false,
-        diagnostic_virtual_text_background = false,
+    opts = {
+      comment_italics = true,
+      transparent_background = true,
+      transparent_float_background = true, -- aka pum(popup menu) background
+      reverse_visual = false,
+      dim_nc = false,
+      cmp_cmdline_disable_search_highlight_group = false, -- disable search highlight group for cmp item
+      telescope_border_follow_float_background = false,
+      lspsaga_border_follow_float_background = false,
+      diagnostic_virtual_text_background = false,
 
-        colors = {},
-        themes = {},
-      }
-    end,
+      colors = {},
+      themes = {},
+    },
   },
 
   {
@@ -1033,9 +967,9 @@ require('lazy').setup({
         -- options = {
         --   theme = 'vscode',
         -- },
-        -- options = {
-        --   theme = 'vitesse',
-        -- },
+        options = {
+          theme = 'vitesse',
+        },
       }
     end,
   },
@@ -1096,16 +1030,18 @@ require('lazy').setup({
         --  the list of additional_vim_regex_highlighting and disabled languages for indent.
         additional_vim_regex_highlighting = { 'ruby' },
       },
+      matchup = { enable = true }, -- Enables smart %
       indent = { enable = true, disable = { 'ruby' } },
     },
   },
 
-  -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
-  -- init.lua. If you want these files, they are in the repository, so you can just download them and
-  -- place them in the correct locations.
+  {
+    'andymass/vim-matchup',
+    setup = function()
+      vim.g.matchup_matchparen_offscreen = { method = 'popup' }
+    end,
+  },
 
-  -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
-  --
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
@@ -1122,10 +1058,6 @@ require('lazy').setup({
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   -- { import = 'custom.plugins' },
   --
-  -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
-  -- Or use telescope!
-  -- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
-  -- you can continue same window with `<space>sr` which resumes last telescope search
 }, {
   ui = {
     icons = vim.g.have_nerd_font and {} or {
@@ -1146,5 +1078,4 @@ require('lazy').setup({
   },
 })
 
--- vim.cmd [[colorscheme solarized-osaka]]
 vim.cmd [[colorscheme vitesse]]
