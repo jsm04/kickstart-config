@@ -81,6 +81,10 @@ if vim.g.neovide then
   vim.o.guifont = 'JetBrains Mono:h13' -- text below applies for VimScript
 end
 
+-- Set blending options
+vim.opt.winblend = 0
+vim.opt.pumblend = 0
+
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = false
 
@@ -904,9 +908,6 @@ require('lazy').setup({
           --  This will expand snippets if the LSP sent a snippet.
           ['<C-y>'] = cmp.mapping.confirm { select = true },
 
-          -- If you prefer more traditional completion keymaps,
-          -- you can uncomment the following lines
-
           -- Try this keymaps
           ['<CR>'] = cmp.mapping.confirm { select = true },
           ['<Tab>'] = cmp.mapping.select_next_item(),
@@ -922,7 +923,6 @@ require('lazy').setup({
           --  function $name($args)
           --    $body
           --  end
-          --
           -- <c-l> will move you to the right of each of the expansion locations.
           -- <c-h> is similar, except moving you backwards.
           ['<C-l>'] = cmp.mapping(function()
@@ -963,51 +963,79 @@ require('lazy').setup({
   },
 
   {
-    'aktersnurra/no-clown-fiesta.nvim',
-    lazy = false,
+    'Mofiqul/vscode.nvim',
+    lazy = true,
     config = function()
-      require('no-clown-fiesta').setup {
-        transparent = true, -- Enable this to disable the bg color
-        styles = {
-          -- You can set any of the style values specified for `:h nvim_set_hl`
-          comments = { italic = true },
-          functions = { bold = true },
-          keywords = {},
-          lsp = {},
-          match_paren = {},
-          type = { italic = true },
-          variables = {},
-        },
+      local c = require('vscode.colors').get_colors()
+      require('vscode').setup {
+        transparent = true,
+        italic_comments = true,
+        underline_links = true,
+        terminal_colors = true,
+        color_overrides = {},
+        group_overrides = {},
       }
     end,
   },
 
   {
     'craftzdog/solarized-osaka.nvim',
+    lazy = true,
+    opts = {
+      transparent = false, -- Enable this to disable setting the background color
+      terminal_colors = false, -- Configure the colors used when opening a `:terminal` in [Neovim](https://github.com/neovim/neovim)
+      styles = {
+        comments = { italic = true },
+        keywords = { italic = true },
+        functions = {},
+        variables = {},
+        sidebars = 'dark',
+        floats = 'dark',
+      },
+      sidebars = { 'qf', 'help' }, -- Set a darker background on sidebar-like windows. For example: `["qf", "vista_kind", "terminal", "packer"]`
+      day_brightness = 0,
+      hide_inactive_statusline = false,
+      dim_inactive = false, -- dims inactive windows
+      lualine_bold = true, -- When `true`, section headers in the lualine theme will be bold
+    },
+  },
+
+  {
+    '2nthony/vitesse.nvim',
     lazy = false,
     priority = 1000,
+    dependencies = {
+      'tjdevries/colorbuddy.nvim',
+    },
     config = function()
-      require('solarized-osaka').setup {
-        -- your configuration comes here
-        -- or leave it empty to use the default settings
-        transparent = false, -- Enable this to disable setting the background color
-        terminal_colors = false, -- Configure the colors used when opening a `:terminal` in [Neovim](https://github.com/neovim/neovim)
-        styles = {
-          -- Style to be applied to different syntax groups
-          -- Value is any valid attr-list value for `:help nvim_set_hl`
-          comments = { italic = true },
-          keywords = { italic = true },
-          functions = {},
-          variables = {},
-          -- Background styles. Can be "dark", "transparent" or "normal"
-          sidebars = 'dark', -- style for sidebars, see below
-          floats = 'dark', -- style for floating windows
-        },
-        sidebars = { 'qf', 'help' }, -- Set a darker background on sidebar-like windows. For example: `["qf", "vista_kind", "terminal", "packer"]`
-        day_brightness = 1, -- Adjusts the brightness of the colors of the **Day** style. Number between 0 and 1, from dull to vibrant colors
-        hide_inactive_statusline = false, -- Enabling this option, will hide inactive statuslines and replace them with a thin border instead. Should work with the standard **StatusLine** and **LuaLine**.
-        dim_inactive = false, -- dims inactive windows
-        lualine_bold = true, -- When `true`, section headers in the lualine theme will be bold
+      require('vitesse').setup {
+        comment_italics = true,
+        transparent_background = true,
+        transparent_float_background = true, -- aka pum(popup menu) background
+        reverse_visual = false,
+        dim_nc = false,
+        cmp_cmdline_disable_search_highlight_group = false, -- disable search highlight group for cmp item
+        telescope_border_follow_float_background = false,
+        lspsaga_border_follow_float_background = false,
+        diagnostic_virtual_text_background = false,
+
+        colors = {},
+        themes = {},
+      }
+    end,
+  },
+
+  {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+      require('lualine').setup {
+        -- options = {
+        --   theme = 'vscode',
+        -- },
+        -- options = {
+        --   theme = 'vitesse',
+        -- },
       }
     end,
   },
@@ -1039,19 +1067,20 @@ require('lazy').setup({
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
       --  and try some other statusline plugin
-      local statusline = require 'mini.statusline'
-      -- set use_icons to true if you have a Nerd Font
-      statusline.setup { use_icons = vim.g.have_nerd_font }
+      -- Mini status line setup
+      -- local statusline = require 'mini.statusline'
+      -- statusline.setup { use_icons = vim.g.have_nerd_font }
 
       -- You can configure sections in the statusline by overriding their
       -- default behavior. For example, here we set the section for
       -- cursor location to LINE:COLUMN
       ---@diagnostic disable-next-line: duplicate-set-field
-      statusline.section_location = function()
-        return '%2l:%-2v'
-      end
+      -- statusline.section_location = function()
+      --   return '%2l:%-2v'
+      -- end
     end,
   },
+
   {
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
@@ -1069,12 +1098,6 @@ require('lazy').setup({
       },
       indent = { enable = true, disable = { 'ruby' } },
     },
-    -- There are additional nvim-treesitter modules that you can use to interact
-    -- with nvim-treesitter. You should go explore a few and see what interests you:
-    --
-    --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
-    --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
-    --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
@@ -1089,7 +1112,7 @@ require('lazy').setup({
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
@@ -1105,8 +1128,6 @@ require('lazy').setup({
   -- you can continue same window with `<space>sr` which resumes last telescope search
 }, {
   ui = {
-    -- If you are using a Nerd Font: set icons to an empty table which will use the
-    -- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table
     icons = vim.g.have_nerd_font and {} or {
       cmd = '⌘',
       config = '🛠',
@@ -1126,6 +1147,4 @@ require('lazy').setup({
 })
 
 -- vim.cmd [[colorscheme solarized-osaka]]
-vim.cmd [[colorscheme no-clown-fiesta]]
--- The line beneath this is called `modeline`. See `:help modeline`
--- vim: ts=2 sts=2 sw=2 et
+vim.cmd [[colorscheme vitesse]]
