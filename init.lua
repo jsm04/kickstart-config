@@ -9,7 +9,6 @@
 ========         ||                    ||   | === |          ========
 ========         ||   KICKSTART.NVIM   ||   |-----|          ========
 ========         ||                    ||   | === |          ========
-========         ||                    ||   |-----|          ========
 ========         ||:Tutor              ||   |:::::|          ========
 ========         |'-..................-'|   |____o|          ========
 ========         `"")----------------(""`   ___________      ========
@@ -76,14 +75,15 @@ vim.fn.mkdir(vim.o.undodir, 'p')
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
-vim.g.neovide_cursor_animation_length = 0
+
+if vim.g.neovide then
+  vim.g.neovide_cursor_animation_length = 0
+  vim.o.guifont = 'JetBrains Mono:h13' -- text below applies for VimScript
+end
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = false
 
--- [[ Setting options ]]
--- See `:help vim.opt`
--- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
 
 -- Make line numbers default
@@ -963,78 +963,9 @@ require('lazy').setup({
   },
 
   {
-    'folke/tokyonight.nvim',
-    lazy = true,
-    -- priority = 1000, -- Make sure to load this before all the other start plugins.
-    -- config = function()
-    --   ---@diagnostic disable-next-line: missing-fields
-    --   require('tokyonight').setup {
-    --     styles = {
-    --       comments = { italic = false }, -- Disable italics in comments
-    --     },
-    --   }
-    --
-    --   vim.cmd.colorscheme 'tokyonight-night'
-    -- end,
-  },
-
-  {
-    'projekt0n/github-nvim-theme',
-    name = 'github-theme',
-    lazy = false,
-    priority = 1000, -- make sure to load this before all the other start plugins
-    config = function()
-      require('github-theme').setup {
-        options = {
-          compile_path = vim.fn.stdpath 'cache' .. '/github-theme',
-          compile_file_suffix = '_compiled', -- Compiled file suffix
-          hide_end_of_buffer = true, -- Hide the '~' character at the end of the buffer for a cleaner look
-          hide_nc_statusline = true, -- Override the underline style for non-active statuslines
-          transparent = true, -- Disable setting bg (make neovim's background transparent)
-          terminal_colors = true, -- Set terminal colors (vim.g.terminal_color_*) used in `:terminal`
-          dim_inactive = false, -- Non focused panes set to alternative background
-          module_default = true, -- Default enable value for modules
-          styles = { -- Style to be applied to different syntax groups
-            comments = 'italic', -- Value is any valid attr-list value `:help attr-list`
-            functions = 'NONE',
-            keywords = 'italic',
-            variables = 'NONE',
-            conditionals = 'italic',
-            constants = 'italic',
-            numbers = 'NONE',
-            operators = 'NONE',
-            strings = 'NONE',
-            types = 'italic',
-          },
-          inverse = { -- Inverse highlight for different types
-            match_paren = false,
-            visual = false,
-            search = false,
-          },
-          darken = { -- Darken floating windows and sidebar-like windows
-            floats = true,
-            sidebars = {
-              enable = true,
-              list = {}, -- Apply dark background to specific windows
-            },
-          },
-          modules = { -- List of various plugins and additional options
-            -- ...
-          },
-        },
-        palettes = {},
-        specs = {},
-        groups = {},
-      }
-
-      vim.cmd 'colorscheme github_dark_high_contrast'
-    end,
-  },
-
-  {
     'craftzdog/solarized-osaka.nvim',
     lazy = false,
-    priority = 2000,
+    priority = 1000,
     config = function()
       require('solarized-osaka').setup {
         -- your configuration comes here
@@ -1046,7 +977,7 @@ require('lazy').setup({
           -- Value is any valid attr-list value for `:help nvim_set_hl`
           comments = { italic = true },
           keywords = { italic = true },
-          functions = {},
+          functions = { bold = true },
           variables = {},
           -- Background styles. Can be "dark", "transparent" or "normal"
           sidebars = 'dark', -- style for sidebars, see below
@@ -1058,8 +989,6 @@ require('lazy').setup({
         dim_inactive = false, -- dims inactive windows
         lualine_bold = true, -- When `true`, section headers in the lualine theme will be bold
       }
-
-      -- vim.cmd [[colorscheme solarized-osaka]]
     end,
   },
 
@@ -1101,19 +1030,15 @@ require('lazy').setup({
       statusline.section_location = function()
         return '%2l:%-2v'
       end
-
-      -- ... and there is more!
-      --  Check out: https://github.com/echasnovski/mini.nvim
     end,
   },
-  { -- Highlight, edit, and navigate code
+  {
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
       ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
-      -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
         enable = true,
@@ -1180,5 +1105,6 @@ require('lazy').setup({
   },
 })
 
+vim.cmd [[colorscheme solarized-osaka]]
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
