@@ -963,6 +963,26 @@ require('lazy').setup({
   },
 
   {
+    'aktersnurra/no-clown-fiesta.nvim',
+    lazy = false,
+    config = function()
+      require('no-clown-fiesta').setup {
+        transparent = true, -- Enable this to disable the bg color
+        styles = {
+          -- You can set any of the style values specified for `:h nvim_set_hl`
+          comments = { italic = true },
+          functions = { bold = true },
+          keywords = {},
+          lsp = {},
+          match_paren = {},
+          type = { italic = true },
+          variables = {},
+        },
+      }
+    end,
+  },
+
+  {
     'craftzdog/solarized-osaka.nvim',
     lazy = false,
     priority = 1000,
@@ -977,7 +997,7 @@ require('lazy').setup({
           -- Value is any valid attr-list value for `:help nvim_set_hl`
           comments = { italic = true },
           keywords = { italic = true },
-          functions = { bold = true },
+          functions = {},
           variables = {},
           -- Background styles. Can be "dark", "transparent" or "normal"
           sidebars = 'dark', -- style for sidebars, see below
@@ -1105,6 +1125,7 @@ require('lazy').setup({
   },
 })
 
-vim.cmd [[colorscheme solarized-osaka]]
+-- vim.cmd [[colorscheme solarized-osaka]]
+vim.cmd [[colorscheme no-clown-fiesta]]
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
