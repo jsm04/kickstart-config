@@ -79,12 +79,15 @@ vim.g.have_nerd_font = false
 vim.opt.number = true
 
 -- Relative line numbers
-vim.wo.relativenumber = true
+vim.opt.relativenumber = true
 
+-- Set incremental line numbering when in insert mode
 vim.api.nvim_create_autocmd('InsertEnter', {
   pattern = '*',
   command = 'set norelativenumber',
 })
+
+-- Restoring relative line numbering on leave
 vim.api.nvim_create_autocmd('InsertLeave', {
   pattern = '*',
   command = 'set relativenumber',
@@ -219,6 +222,7 @@ vim.keymap.set('n', '<leader>yd', ':let @+ = expand("%:p:h")<CR>', { desc = 'Cop
 vim.api.nvim_set_keymap('n', 'gm', '`', { noremap = true, silent = true })
 
 -- Diagnostics disable text toggle
+-- and start disabled
 vim.keymap.set('n', '<leader>tdt', function()
   local current = vim.diagnostic.config().virtual_text
   vim.diagnostic.config { virtual_text = not current }
@@ -244,6 +248,14 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function()
     vim.highlight.on_yank()
+  end,
+})
+
+-- Disable separators for all themes
+vim.api.nvim_create_autocmd('ColorScheme', {
+  pattern = '*',
+  callback = function()
+    vim.api.nvim_set_hl(0, 'WinSeparator', { fg = 'none', bg = 'none' })
   end,
 })
 
@@ -498,6 +510,7 @@ require('lazy').setup({
       },
     },
   },
+
   {
     -- Main LSP Configuration
     'neovim/nvim-lspconfig',
@@ -1037,10 +1050,10 @@ require('lazy').setup({
       incremental_selection = {
         enable = true,
         keymaps = {
-          init_selection = 'gse',
+          init_selection = 'gs]',
           node_incremental = 'gs]',
           node_decremental = 'gs[',
-          scope_incremental = 'gss',
+          scope_incremental = 'gsS',
         },
       },
     },
@@ -1060,7 +1073,7 @@ require('lazy').setup({
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
