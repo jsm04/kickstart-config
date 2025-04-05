@@ -75,8 +75,6 @@ vim.opt.pumblend = 0
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = false
 
---  For more options, you can see `:help option-list`
-
 -- Make line numbers default
 vim.opt.number = true
 
@@ -120,10 +118,10 @@ vim.opt.smartcase = true
 vim.opt.signcolumn = 'yes'
 
 -- Decrease update time
-vim.opt.updatetime = 2500
+vim.opt.updatetime = 300
 
 -- Decrease mapped sequence wait time
-vim.opt.timeoutlen = 300
+vim.opt.timeoutlen = 777
 
 -- Configure how new splits should be opened
 vim.opt.splitright = true
@@ -133,7 +131,7 @@ vim.opt.splitbelow = true
 --  See `:help 'list'`
 --  and `:help 'listchars'`
 vim.opt.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+vim.opt.listchars = { tab = '▸·', trail = '·', nbsp = '␣' }
 
 -- Toggle whitespace
 vim.api.nvim_set_keymap('n', '<leader>tw', ':set list!<CR>', { noremap = true, silent = true })
@@ -145,7 +143,7 @@ vim.opt.inccommand = 'split'
 vim.opt.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
-vim.opt.scrolloff = 10
+vim.opt.scrolloff = 21
 
 -- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
 -- instead raise a dialog asking if you wish to save the current file(s)
@@ -764,10 +762,12 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
-        -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
+        python = { 'ruff', 'black', stop_after_first = true },
+        javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'prettierd', 'prettier', stop_after_first = true },
+        markdown = { 'prettierd', 'prettier', stop_after_first = true },
+        html = { 'prettierd', 'prettier', stop_after_first = true },
+        css = { 'prettierd', 'prettier', stop_after_first = true },
       },
     },
   },
@@ -826,7 +826,6 @@ require('lazy').setup({
 
         -- For an understanding of why these mappings were
         -- chosen, you will need to read `:help ins-completion`
-        --
         -- No, but seriously. Please read `:help ins-completion`, it is really good!
         mapping = cmp.mapping.preset.insert {
           -- Select the [n]ext item
@@ -885,7 +884,6 @@ require('lazy').setup({
           { name = 'luasnip' },
           { name = 'path' },
           { name = 'nvim_lsp_signature_help' },
-          { name = 'render-markdown' },
         },
       }
     end,
@@ -893,6 +891,8 @@ require('lazy').setup({
 
   {
     'MeanderingProgrammer/render-markdown.nvim',
+    lazy = true,
+    ft = 'markdown',
     opts = {
       completions = { lsp = { enabled = true } },
     },
@@ -902,7 +902,6 @@ require('lazy').setup({
     'Mofiqul/vscode.nvim',
     lazy = true,
     config = function()
-      local c = require('vscode.colors').get_colors()
       require('vscode').setup {
         transparent = true,
         italic_comments = true,
@@ -939,7 +938,7 @@ require('lazy').setup({
   {
     '2nthony/vitesse.nvim',
     lazy = false,
-    priority = 1000,
+    priority = 500,
     dependencies = {
       'tjdevries/colorbuddy.nvim',
     },
@@ -1019,9 +1018,11 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
+
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'python', 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+
       auto_install = true,
       highlight = {
         enable = true,
@@ -1032,6 +1033,16 @@ require('lazy').setup({
       },
       matchup = { enable = true }, -- Enables smart %
       indent = { enable = true, disable = { 'ruby' } },
+
+      incremental_selection = {
+        enable = true,
+        keymaps = {
+          init_selection = 'gse',
+          node_incremental = 'gs]',
+          node_decremental = 'gs[',
+          scope_incremental = 'gss',
+        },
+      },
     },
   },
 
@@ -1049,7 +1060,6 @@ require('lazy').setup({
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
