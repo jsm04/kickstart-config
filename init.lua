@@ -93,6 +93,20 @@ vim.api.nvim_create_autocmd('InsertLeave', {
   command = 'set relativenumber',
 })
 
+-- Disable separators for all themes
+vim.api.nvim_create_autocmd('ColorScheme', {
+  pattern = '*',
+  callback = function()
+    vim.opt.fillchars:append {
+      vert = ' ',
+      horiz = ' ',
+      horizup = ' ',
+      horizdown = ' ',
+    }
+    vim.api.nvim_set_hl(0, 'WinSeparator', { fg = 'none', bg = 'none' })
+  end,
+})
+
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
 
@@ -248,14 +262,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function()
     vim.highlight.on_yank()
-  end,
-})
-
--- Disable separators for all themes
-vim.api.nvim_create_autocmd('ColorScheme', {
-  pattern = '*',
-  callback = function()
-    vim.api.nvim_set_hl(0, 'WinSeparator', { fg = 'none', bg = 'none' })
   end,
 })
 
@@ -681,24 +687,29 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        basedpyright = {},
-        ruff = {},
-        prettier = {},
-        gopls = {},
+        docker_compose_language_service = {},
+        dockerls = {},
+        bashls = {},
         rust_analyzer = {},
         clangd = {},
+        gopls = {},
+        basedpyright = {},
+        ruff = {},
+        ts_ls = {},
+        prettier = {},
+        html = {},
+        emmet_ls = {},
+        cssls = {},
+        astro = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         lua_ls = {
-          -- cmd = { ... },
-          -- filetypes = { ... },
-          -- capabilities = {},
           settings = {
             Lua = {
               completion = {
                 callSnippet = 'Replace',
               },
               -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-              -- diagnostics = { disable = { 'missing-fields' } },
+              diagnostics = { disable = { 'missing-fields' } },
             },
           },
         },
@@ -781,6 +792,7 @@ require('lazy').setup({
         markdown = { 'prettierd', 'prettier', stop_after_first = true },
         html = { 'prettierd', 'prettier', stop_after_first = true },
         css = { 'prettierd', 'prettier', stop_after_first = true },
+        ['*'] = { 'codespell' },
       },
     },
   },
@@ -966,7 +978,10 @@ require('lazy').setup({
       lspsaga_border_follow_float_background = false,
       diagnostic_virtual_text_background = false,
 
-      colors = {},
+      colors = {
+        background = '#101010',
+        activeBackground = '#101010',
+      },
       themes = {},
     },
   },
@@ -990,7 +1005,13 @@ require('lazy').setup({
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
   -- Float terminal
-  { 'voldikss/vim-floaterm' },
+  {
+    'voldikss/vim-floaterm',
+    config = function()
+      vim.g.floaterm_height = 0.95
+      vim.g.floaterm_width = 0.8
+    end,
+  },
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
@@ -1034,7 +1055,36 @@ require('lazy').setup({
 
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'python', 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = {
+        'bash',
+        'c',
+        'cmake',
+        'cpp',
+        'css',
+        'diff',
+        'dockerfile',
+        'go',
+        'html',
+        'java',
+        'javascript',
+        'json',
+        'lua',
+        'luadoc',
+        'make',
+        'markdown',
+        'markdown_inline',
+        'python',
+        'query',
+        'rst',
+        'rust',
+        'sql',
+        'toml',
+        'tsx',
+        'typescript',
+        'vim',
+        'vimdoc',
+        'yaml',
+      },
 
       auto_install = true,
       highlight = {
